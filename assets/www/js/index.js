@@ -16,6 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/* The setup for jquery and phonegap with a defered state is to wait until phonegap is loaded then fire off the event that will do your work.
+ */ 
+
+/* Setup for jquery */
+var deviceReadyDeferred = $.Deferred();
+
+/* The setup for phonegap, and jquery mobile (which needs jquery), is to wait until both frameworks are initialized and then call the start function
+ * var jqmReadyDeferred = $.Deferred();
+ * $(document).one("mobileinit", function() {
+ * 	jqmReadyDeferred.resolve();
+ * });
+ * $.when(deviceReadyDeferred, jqmReadyDeferred).then(doWhenBothFrameworksLoaded);
+ */
+
+$.when(deviceReadyDeferred).then(doWhenBothFrameworksLoaded);
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -34,9 +51,16 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+		deviceReadyDeferred.resolve();        
     },
+    
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         console.log('Received Event: ' + id);
     }
 };
+
+/* this point the frameworks are loaded */
+function doWhenBothFrameworksLoaded() { 
+	$('#loaded').css('color', 'red').html('You are running jQuery version: ' + $.fn.jquery);
+}
